@@ -30,6 +30,57 @@ npm run dev
 Dann **http://localhost:4173** öffnen und im ersten Panel eine Mission wählen:
 *Live Contacts*, *Space Missions*, *Environmental* oder *Explore Manually*.
 
+## Windows
+
+```powershell
+git clone -b claude/gods-eye-view-install-70dzxa https://github.com/umi1970/godseye.git
+cd godseye
+node -v            # muss v24.14.0+ sein
+npm ci
+npm run dev
+```
+
+Node 24 installieren, falls nötig: `winget install OpenJS.NodeJS.LTS`
+(danach Terminal neu öffnen) oder von https://nodejs.org.
+
+### Fehler: `Cannot find module @rollup/rollup-win32-x64-msvc`
+
+Bekannter npm-Bug (npm/cli#4828): npm überspringt beim Installieren die
+optionale Plattform-Binary. Das Lockfile ist korrekt, es fehlt nur lokal.
+
+Reihenfolge zum Beheben, in PowerShell im Projektordner:
+
+```powershell
+Remove-Item -Recurse -Force node_modules
+npm cache clean --force
+npm ci
+```
+
+Hilft das nicht, die Binary direkt nachinstallieren (Lockfile bleibt unberührt):
+
+```powershell
+npm i @rollup/rollup-win32-x64-msvc@4.62.0 --no-save
+npm run dev
+```
+
+Letzte Option, falls beides scheitert - löst die Versions-Pins auf:
+
+```powershell
+Remove-Item -Recurse -Force node_modules
+Remove-Item -Force package-lock.json
+npm install
+```
+
+### Weitere Windows-Stolpersteine
+
+- **OneDrive:** Liegt das Projekt unter `Dokumente`, synchronisiert OneDrive
+  `node_modules` mit und kann Dateien während der Installation verschieben.
+  Projekt besser nach `C:\dev\godseye` legen oder den Ordner in OneDrive
+  von der Synchronisierung ausschließen.
+- **Virenscanner:** Echtzeitschutz kann neu entpackte `.node`-Binaries
+  blockieren. Projektordner ggf. ausnehmen.
+- **Port 4173 belegt:** `npm run dev -- --port 5173`.
+
 ## API-Keys (optional)
 
 Keys sind Upgrades, keine Voraussetzung. Ohne Keys laufen bereits: Esri-Satellitenbilder,
